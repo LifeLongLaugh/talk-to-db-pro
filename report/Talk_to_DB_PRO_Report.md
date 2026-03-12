@@ -31,7 +31,7 @@ The system takes a user's question, expands and rewrites it using an LLM, embeds
 
 ### 1.1 The Problem Being Solved
 
-- HxGN Databridge Pro documentation spans multiple markdown files and is not searchable by meaning — only by keyword
+- HxGN Databridge Pro documentation spans multiple files and is not searchable by meaning — only by keyword
 - The NiFi processor catalogue contains 200+ processors with complex property descriptions that engineers frequently need to look up
 - Finding which processors support a specific capability (e.g. SQL execution, SFTP transfer) required manual scanning
 - No system existed to answer follow-up questions in context across multiple document types simultaneously
@@ -574,18 +574,9 @@ All 12 bugs encountered across 5 YAML iterations and multiple runtime debugging 
 
 | # | Bug | Fix |
 |---|-----|-----|
-| 1 | `sys.dialogue_turns` variable does not exist in Dify | Enable Memory toggle on LLM node; remove variable from prompt |
-| 2 | `yaxuanm/qdrant` plugin ignores `using_dense`/`using_sparse`; sends unnamed vector; Qdrant returns HTTP 400 "Not existing vector name error" | Replace plugin tool nodes with HTTP Request nodes calling `/points/query` directly with `"using": "dense"` |
-| 3 | Jina Embeddings URL left as placeholder text "Add Jina Embeddings" | Set to `https://api.jina.ai/v1/embeddings` |
-| 4 | All 3 Qdrant nodes used `method: get`; GET cannot carry a request body | Change all to `method: post` |
-| 5 | `QDRANT_POINTS_URL` env var missing `/collections/` path segment | Add `/collections/`: `.../6333/collections/hxgn_knowledge_base/points/query` |
-| 6 | Result Mapper input `value_type` was `array[object]` leftover from plugin era; Variable Aggregator outputs `string` | Change `value_type` to `string` |
-| 7 | Extract Vector outputs 1024-element array; Dify caps code node arrays at 500 elements — runtime error | Return `json.dumps(embedding)` as string; inject unquoted in Qdrant body |
-| 8 | Qdrant response envelope is `{result: {points: [...]}}` but code did `data.get("result", [])` returning a dict not a list | Fix to `data.get("result", {}).get("points", [])` |
-| 9 | Jina Reranker returns `document` as a plain string; Format for LLM Context called `.get("text")` on it — `AttributeError: 'str' object has no attribute 'get'` | Add isinstance check: `text = doc if isinstance(doc, str) else doc.get("text", "")` |
-| 10 | Score threshold of 0.15 in Result Mapper filtered all results — RRF scores are ~0.01–0.05 and never reach 0.15; Jina received empty documents array | Remove threshold entirely; quality controlled by `limit` on Qdrant nodes and `top_n` on Reranker |
-| 11 | Merge Results returned `json.dumps(combined)` but output declared as `array[object]` — type mismatch | Return bare list or use consistent `string` output type with `json.dumps` |
-| 12 | Jina Reranker body had unquoted query: `"query": {{var}}` — produces invalid JSON when query contains special characters | Wrap in quotes: `"query": "{{#var#}}"` |
+| 1 | `yaxuanm/qdrant` plugin ignores `using_dense`/`using_sparse`; sends unnamed vector; Qdrant returns HTTP 400 "Not existing vector name error" | Replace plugin tool nodes with HTTP Request nodes calling `/points/query` directly with `"using": "dense"` |
+| 2 | Extract Vector outputs 1024-element array; Dify caps code node arrays at 500 elements — runtime error | Return `json.dumps(embedding)` as string; inject unquoted in Qdrant body |
+| 3 | Jina Reranker returns `document` as a plain string; Format for LLM Context called `.get("text")` on it — `AttributeError: 'str' object has no attribute 'get'` | Add isinstance check: `text = doc if isinstance(doc, str) else doc.get("text", "")` |
 
 ---
 
@@ -671,7 +662,6 @@ All keys stored as Dify environment variables (masked as `*****`) and referenced
 | Improvement | Description | Complexity |
 |-------------|-------------|------------|
 | Hybrid Search | Re-enable BM25 sparse search by adding sparse vector computation alongside dense embedding, then fusing with Qdrant RRF via `/points/query` prefetch API | Medium |
-| Streaming Citations | Surface passage sources as inline UI elements using Dify's `retriever_resource` feature — requires migrating to Dify Knowledge Base nodes | High |
 | Dynamic Routing | Extend Intent Router with an LLM-based classifier to handle ambiguous queries beyond current regex patterns | Medium |
 | Metadata Filtering UI | Allow users to specify dataset scope via conversation variable toggles ("search only processors") | Low |
 | Answer Confidence | If top reranker score is below threshold, respond with explicit "insufficient information" rather than low-quality answer | Low |
