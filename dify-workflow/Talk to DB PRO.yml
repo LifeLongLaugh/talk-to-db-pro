@@ -1,0 +1,989 @@
+app:
+  description: Talk to DB PRO markdown and text documents readily ingested into Qdrant
+    cluster using Jina Embedding v3, Qdrant vector Datasets, Llama 3.1 LLM, and Qwen
+    LLM
+  icon: beca3748-41b9-44cc-99d7-87db078faaf6
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: Talk to DB PRO
+  use_icon_as_answer_icon: true
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/groq:0.0.12@38f75b2f4a3687af7b0947693c7903f5c7d8756f217ea492b8b81de6f16601f6
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: ''
+    id: 4207671a-bf6d-43a3-9ab1-9686bf759ba6
+    name: QDRANT_POINTS_URL
+    selector:
+    - env
+    - QDRANT_POINTS_URL
+    value: null
+    value_type: string
+  - description: ''
+    id: 4eb8a8df-5a35-406d-8383-2d0d103c2514
+    name: QDRANT_API_KEY
+    selector:
+    - env
+    - QDRANT_API_KEY
+    value: null
+    value_type: string
+  - description: ''
+    id: 0babf000-dd41-4a40-b9a1-efbfe8aea232
+    name: JINA_API_KEY
+    selector:
+    - env
+    - JINA_API_KEY
+    value: null
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1772970532640-source-1772973692102-target
+      selected: false
+      source: '1772970532640'
+      sourceHandle: source
+      target: '1772973692102'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1773067376966-source-1773067852821-target
+      selected: false
+      source: '1773067376966'
+      sourceHandle: source
+      target: '1773067852821'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1773067852821-source-1773068077928-target
+      selected: false
+      source: '1773067852821'
+      sourceHandle: source
+      target: '1773068077928'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1773068077928-source-1773068310795-target
+      selected: false
+      source: '1773068077928'
+      sourceHandle: source
+      target: '1773068310795'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1773068310795-source-1773068440860-target
+      selected: false
+      source: '1773068310795'
+      sourceHandle: source
+      target: '1773068440860'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: answer
+        targetType: code
+      id: 1773065598617-source-1773077552800-target
+      selected: false
+      source: '1773065598617'
+      sourceHandle: source
+      target: '1773077552800'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1773077552800-source-1773077675139-target
+      selected: false
+      source: '1773077552800'
+      sourceHandle: source
+      target: '1773077675139'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1773078688584-source-1773078889010-target
+      selected: false
+      source: '1773078688584'
+      sourceHandle: source
+      target: '1773078889010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1773078889010-source-1773067376966-target
+      selected: false
+      source: '1773078889010'
+      sourceHandle: source
+      target: '1773067376966'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: http-request
+      id: 1772973692102-source-1773157495040-target
+      selected: false
+      source: '1772973692102'
+      sourceHandle: source
+      target: '1773157495040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1773157495040-source-1773158737461-target
+      selected: false
+      source: '1773157495040'
+      sourceHandle: source
+      target: '1773158737461'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 1773158737461-source-1773065598617-target
+      selected: false
+      source: '1773158737461'
+      sourceHandle: source
+      target: '1773065598617'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1773077675139-true-1773185085153-target
+      selected: false
+      source: '1773077675139'
+      sourceHandle: 'true'
+      target: '1773185085153'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1773077675139-false-17731854106500-target
+      source: '1773077675139'
+      sourceHandle: 'false'
+      target: '17731854106500'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1773077675139-false-17731854155860-target
+      source: '1773077675139'
+      sourceHandle: 'false'
+      target: '17731854155860'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17731854106500-source-1773078688584-target
+      source: '17731854106500'
+      sourceHandle: source
+      target: '1773078688584'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17731854155860-source-1773078688584-target
+      source: '17731854155860'
+      sourceHandle: source
+      target: '1773078688584'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: variable-aggregator
+      id: 1773185085153-source-1773078889010-target
+      source: '1773185085153'
+      sourceHandle: source
+      target: '1773078889010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: User Input
+        type: start
+        variables: []
+      height: 73
+      id: '1772970532640'
+      position:
+        x: 0
+        y: 25
+      positionAbsolute:
+        x: 0
+        y: 25
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 5
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: llama-3.1-8b-instant
+          provider: langgenius/groq/groq
+        prompt_template:
+        - id: 46b03b1d-7e84-4662-bd12-d886e1a359d0
+          role: system
+          text: You are a query expansion assistant for a retrieval-augmented system.
+            Given the conversation history and the user's latest message, rewrite
+            and expand the query to maximize retrieval recall. - Fix typos and ambiguities
+            - Add synonyms or related terms if helpful - Make implicit context explicit
+            (e.g. referencing a previously mentioned topic) - Output ONLY the rewritten
+            query. No explanations, no preamble, no quotes.
+        - id: ce3da6bd-622d-4e5c-a055-95bfdd1c98de
+          role: user
+          text: 'Current user message: {{#sys.query#}}
+
+            Rewritten query:'
+        selected: false
+        structured_output_enabled: false
+        title: ' Query Rewriter'
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1772973692102'
+      position:
+        x: 342
+        y: 18
+      positionAbsolute:
+        x: 342
+        y: 18
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '> 🔍 **Thinking:**
+
+          {{#1772973692102.text#}}
+
+
+          '
+        selected: false
+        title: Expanded Query Display
+        type: answer
+        variables: []
+      height: 119
+      id: '1773065598617'
+      position:
+        x: 1368
+        y: 2
+      positionAbsolute:
+        x: 1368
+        y: 2
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(qdrant_results: str, rewritten_query: str)\
+          \ -> dict:\n    if not qdrant_results or not qdrant_results.strip():\n \
+          \       return {\n            \"reranker_documents\": \"[]\",\n        \
+          \    \"candidate_docs\": \"[]\",\n            \"query_for_reranker\": rewritten_query\n\
+          \        }\n    \n    data = json.loads(qdrant_results)\n    \n    # Unified\
+          \ path returns {\"result\": [...]}; dual path returns merged list directly\n\
+          \    if isinstance(data, list):\n        results = data\n    elif isinstance(data,\
+          \ dict):\n        results = data.get(\"result\", {}).get(\"points\", [])\n\
+          \    else:\n        results = []\n\n    documents = []\n    for r in results:\n\
+          \        payload = r.get(\"payload\", {})\n        text = payload.get(\"\
+          text\", \"\")\n        if not text:\n            continue\n        documents.append({\n\
+          \            \"id\": str(r.get(\"id\", \"\")),\n            \"text\": text,\n\
+          \            \"source\": payload.get(\"source\", \"unknown\"),\n       \
+          \     \"category\": payload.get(\"category\", \"\"),\n            \"qdrant_score\"\
+          : r.get(\"score\", 0)\n        })\n\n    return {\n        \"reranker_documents\"\
+          : json.dumps([d[\"text\"] for d in documents]),\n        \"candidate_docs\"\
+          : json.dumps(documents),\n        \"query_for_reranker\": rewritten_query\n\
+          \    }"
+        code_language: python3
+        outputs:
+          candidate_docs:
+            children: null
+            type: string
+          query_for_reranker:
+            children: null
+            type: string
+          reranker_documents:
+            children: null
+            type: string
+        selected: false
+        title: Qdrant Result Mapper
+        type: code
+        variables:
+        - value_selector:
+          - '1772973692102'
+          - text
+          value_type: string
+          variable: rewritten_query
+        - value_selector:
+          - '1773078889010'
+          - output
+          value_type: string
+          variable: qdrant_results
+      height: 52
+      id: '1773067376966'
+      position:
+        x: 3480
+        y: 68
+      positionAbsolute:
+        x: 3480
+        y: 68
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-638
+            key: ''
+            type: text
+            value: "{\n  \"model\": \"jina-reranker-v2-base-multilingual\",\n  \"\
+              query\": \"{{#1773067376966.query_for_reranker#}}\",\n  \"documents\"\
+              : {{#1773067376966.reranker_documents#}},\n  \"top_n\": 5,\n  \"return_documents\"\
+              : true\n}"
+          type: json
+        headers: 'Authorization:Bearer {{#env.JINA_API_KEY#}}
+
+          Content-Type:application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Jina Reranker
+        type: http-request
+        url: https://api.jina.ai/v1/rerank
+        variables: []
+      height: 121
+      id: '1773067852821'
+      position:
+        x: 3822
+        y: 33
+      positionAbsolute:
+        x: 3822
+        y: 33
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(reranker_response: str, candidate_docs: str)\
+          \ -> dict:\n    reranker_data = json.loads(reranker_response)\n    candidates\
+          \ = json.loads(candidate_docs)\n    \n    # Build text → metadata lookup\n\
+          \    id_lookup = {d[\"text\"]: d for d in candidates}\n    \n    results\
+          \ = reranker_data.get(\"results\", [])\n    \n    passages = []\n    citation_map\
+          \ = []\n    \n    for i, r in enumerate(results, 1):\n        # document\
+          \ is a plain string, not a dict\n        doc = r.get(\"document\", \"\"\
+          )\n        text = doc if isinstance(doc, str) else doc.get(\"text\", \"\"\
+          )\n        \n        relevance_score = r.get(\"relevance_score\", 0)\n \
+          \       original = id_lookup.get(text, {})\n        source = original.get(\"\
+          source\", \"unknown\")\n        \n        passages.append(f\"[{i}] (source:\
+          \ {source})\\n{text}\")\n        citation_map.append({\n            \"citation_num\"\
+          : i,\n            \"doc_id\": original.get(\"id\", \"unknown\"),\n     \
+          \       \"relevance_score\": round(relevance_score, 4),\n            \"\
+          snippet\": text[:120] + \"...\" if len(text) > 120 else text\n        })\n\
+          \    \n    return {\n        \"context_passages\": \"\\n\\n\".join(passages),\n\
+          \        \"citations_metadata\": json.dumps(citation_map, indent=2)\n  \
+          \  }"
+        code_language: python3
+        outputs:
+          citations_metadata:
+            children: null
+            type: string
+          context_passages:
+            children: null
+            type: string
+        selected: false
+        title: Format for LLM Context
+        type: code
+        variables:
+        - value_selector:
+          - '1773067852821'
+          - body
+          value_type: string
+          variable: reranker_response
+        - value_selector:
+          - '1773067376966'
+          - candidate_docs
+          value_type: string
+          variable: candidate_docs
+      height: 52
+      id: '1773068077928'
+      position:
+        x: 4164
+        y: 68
+      positionAbsolute:
+        x: 4164
+        y: 68
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: qwen/qwen3-32b
+          provider: langgenius/groq/groq
+        prompt_template:
+        - id: 960b840a-9023-4e0a-84e2-44db08fea598
+          role: system
+          text: "/no_think\nYou are a precise, helpful research assistant. Answer\
+            \ the user's question using ONLY the provided context passages.\n \nRules:\n\
+            - Do NOT fabricate information not present in the passages.\n- If the\
+            \ context is insufficient, say so explicitly.\n- Quote passages as closely\
+            \ as possible rather than paraphrasing.\n- If a claim cannot be traced\
+            \ to a specific passage word-for-word, omit it.\n- Be concise but complete.\n\
+            - Use inline citations like [1], [2], etc. matching the passage numbers\
+            \ in the context.\n- If multiple passages support a claim, cite all of\
+            \ them: [1][3].\n- Suggest followup questions before Sources Section.\
+            \ \n- At the end, include a \"**Sources**\" section listing each cited\
+            \ passage number and its source like [1] filename, [2] filename, etc.\
+            \ where filenames are the source value of each context\n- use filenames\
+            \ without extensions\n "
+        - id: 7b1a9ead-2491-4c94-9ed9-88f8cb309a93
+          role: user
+          text: 'Context passages:
+
+            {{#1773068077928.context_passages#}}
+
+
+            Citation metadata (use these doc_ids and sources in your Sources section):
+
+            {{#1773068077928.citations_metadata#}}
+
+
+            User question: {{#sys.query#}}
+
+            Rewritten/expanded query used for retrieval: {{#1772973692102.text#}}
+
+
+            Answer with inline citations:'
+        selected: true
+        title: Answer Synthesis
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1773068310795'
+      position:
+        x: 4506
+        y: 50
+      positionAbsolute:
+        x: 4506
+        y: 50
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1773068310795.text#}}'
+        selected: false
+        title: Final Answer
+        type: answer
+        variables: []
+      height: 103
+      id: '1773068440860'
+      position:
+        x: 4848
+        y: 42
+      positionAbsolute:
+        x: 4848
+        y: 42
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import re\n\ndef main(query: str) -> dict:\n    # Signals pointing\
+          \ to a specific component (dual search)\n    dual_signals = [\n        r'\\\
+          b[A-Z][a-zA-Z]+(?:Processor|Service|Pool|Reader|Writer|Controller)\\b',\
+          \  # CamelCase component\n        r'\\bconfigure\\b',\n        r'\\bproperties\\\
+          b',\n        r'\\bwhat does .+ do\\b',\n        r'\\bcontroller service\\\
+          b',\n        r'\\bListSFTP|PutS3|GetFile|DBCPConnection|JsonPath\\b',  #\
+          \ known processor names\n    ]\n    \n    for pattern in dual_signals:\n\
+          \        if re.search(pattern, query, re.IGNORECASE):\n            return\
+          \ {\"search_mode\": \"dual\"}\n    \n    return {\"search_mode\": \"unified\"\
+          }"
+        code_language: python3
+        outputs:
+          search_mode:
+            children: null
+            type: string
+        selected: false
+        title: Intent Router
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+      height: 52
+      id: '1773077552800'
+      position:
+        x: 1710
+        y: 36
+      positionAbsolute:
+        x: 1710
+        y: 36
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 2a3d9d81-e8c7-4c29-b976-7ffb8f3df54a
+            value: unified
+            varType: string
+            variable_selector:
+            - '1773077552800'
+            - search_mode
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: IF/ELSE
+        type: if-else
+      height: 124
+      id: '1773077675139'
+      position:
+        x: 2052
+        y: 0
+      positionAbsolute:
+        x: 2052
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(tech_results: str, proc_results: str) -> dict:\n\
+          \    tech_data = json.loads(tech_results)\n    proc_data = json.loads(proc_results)\n\
+          \    \n    tech = tech_data.get(\"result\", {}).get(\"points\", [])\n  \
+          \  proc = proc_data.get(\"result\", {}).get(\"points\", [])\n    \n    combined\
+          \ = tech + proc\n    combined.sort(key=lambda x: x.get(\"score\", 0), reverse=True)\n\
+          \    \n    return {\"merged_results\": json.dumps(combined)}"
+        code_language: python3
+        outputs:
+          merged_results:
+            children: null
+            type: string
+        selected: false
+        title: Merge Results
+        type: code
+        variables:
+        - value_selector:
+          - '17731854106500'
+          - body
+          value_type: string
+          variable: tech_results
+        - value_selector:
+          - '17731854155860'
+          - body
+          value_type: string
+          variable: proc_results
+      height: 52
+      id: '1773078688584'
+      position:
+        x: 2763.1335334944797
+        y: 135.80120096687898
+      positionAbsolute:
+        x: 2763.1335334944797
+        y: 135.80120096687898
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        output_type: string
+        selected: false
+        title: Variable Aggregator
+        type: variable-aggregator
+        variables:
+        - - '1773185085153'
+          - body
+        - - '1773078688584'
+          - merged_results
+      height: 136
+      id: '1773078889010'
+      position:
+        x: 3138
+        y: 25
+      positionAbsolute:
+        x: 3138
+        y: 25
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-257
+            key: ''
+            type: text
+            value: "{\n  \"model\": \"jina-embeddings-v3\",\n  \"input\": [\"{{#1772973692102.text#}}\"\
+              ],\n  \"task\": \"retrieval.query\",\n  \"dimensions\": 1024\n}"
+          type: json
+        headers: 'Authorization:Bearer {{#env.JINA_API_KEY#}}
+
+          Content-Type:application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Jina Embeddings
+        type: http-request
+        url: https://api.jina.ai/v1/embeddings
+        variables: []
+      height: 137
+      id: '1773157495040'
+      position:
+        x: 684
+        y: 1
+      positionAbsolute:
+        x: 684
+        y: 1
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(jina_response: str) -> dict:\n    data = json.loads(jina_response)\n\
+          \    embedding = data[\"data\"][0][\"embedding\"]\n    return {\"query_vector\"\
+          : json.dumps(embedding)}  # ← serialize to string"
+        code_language: python3
+        outputs:
+          query_vector:
+            children: null
+            type: string
+        selected: false
+        title: Extract Vector
+        type: code
+        variables:
+        - value_selector:
+          - '1773157495040'
+          - body
+          value_type: string
+          variable: jina_response
+      height: 52
+      id: '1773158737461'
+      position:
+        x: 1026
+        y: 36
+      positionAbsolute:
+        x: 1026
+        y: 36
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-387
+            key: ''
+            type: text
+            value: "{\n  \"query\": {{#1773158737461.query_vector#}},\n  \"using\"\
+              : \"dense\",\n  \"limit\": 10,\n  \"with_payload\": true,\n  \"with_vector\"\
+              : false\n}"
+          type: json
+        headers: 'api-key:{{#env.QDRANT_API_KEY#}}
+
+          Content-Type:application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: UNIFIED DENSE SEARCH
+        type: http-request
+        url: '{{#env.QDRANT_POINTS_URL#}}'
+        variables: []
+      height: 125
+      id: '1773185085153'
+      position:
+        x: 2414
+        y: -193.90685973649747
+      positionAbsolute:
+        x: 2414
+        y: -193.90685973649747
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-387
+            key: ''
+            type: text
+            value: "{\n  \"query\": {{#1773158737461.query_vector#}},\n  \"using\"\
+              : \"dense\",\n  \"filter\": {\"must\": [{\"key\": \"dataset\", \"match\"\
+              : {\"value\": \"technical_docs\"}}]},\n  \"limit\": 5,\n  \"with_payload\"\
+              : true,\n  \"with_vector\": false\n}"
+          type: json
+        headers: 'api-key:{{#env.QDRANT_API_KEY#}}
+
+          Content-Type:application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: TECH DENSE SEARCH
+        type: http-request
+        url: '{{#env.QDRANT_POINTS_URL#}}'
+        variables: []
+      height: 125
+      id: '17731854106500'
+      position:
+        x: 2414
+        y: 25
+      positionAbsolute:
+        x: 2414
+        y: 25
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-387
+            key: ''
+            type: text
+            value: "{\n  \"query\": {{#1773158737461.query_vector#}},\n  \"using\"\
+              : \"dense\",\n  \"filter\": {\"must\": [{\"key\": \"dataset\", \"match\"\
+              : {\"value\": \"processors_services\"}}]},\n  \"limit\": 5,\n  \"with_payload\"\
+              : true,\n  \"with_vector\": false\n}"
+          type: json
+        headers: 'api-key:{{#env.QDRANT_API_KEY#}}
+
+          Content-Type:application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: PROC DENSE SEARCH
+        type: http-request
+        url: '{{#env.QDRANT_POINTS_URL#}}'
+        variables: []
+      height: 125
+      id: '17731854155860'
+      position:
+        x: 2414
+        y: 236.9347344613588
+      positionAbsolute:
+        x: 2414
+        y: 236.9347344613588
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -324.30969520407734
+      y: 259.7714543894168
+      zoom: 0.25
+  rag_pipeline_variables: []
