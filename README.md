@@ -108,8 +108,7 @@ Talk to DB PRO is a **production-grade RAG pipeline** — not a basic demo. It u
 
 | Diagram | Audience |
 |---|---|
-| [**Logical Flow**](https://LifeLongLaugh.github.io/talk-to-db-pro/logical-flow.html) | Anyone — conceptual stages in plain English |
-| [**Pipeline Diagram**](https://LifeLongLaugh.github.io/talk-to-db-pro/pipeline-diagram.html) | Technical — every node, model, and API call |
+| [**Pipeline Diagram**](https://LifeLongLaugh.github.io/talk-to-db-pro/Docs/Pipeline_Diagram.gif) | Technical — every node, model, and API call |
 
 ### The 8 stages
 
