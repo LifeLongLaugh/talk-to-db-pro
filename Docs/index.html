@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talk to DB PRO — RAG Pipeline</title>
+<meta name="description" content="A production-grade conversational RAG system over technical documentation. Built on Dify, Qdrant, Groq, and Jina AI. $0/month.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #111111;
+    --ink2:      #555555;
+    --ink3:      #999999;
+    --rule:      #E8E8E4;
+    --bg:        #F8F8F5;
+    --white:     #FFFFFF;
+    --blue-bg:   #EBF3FF;
+    --blue-bd:   #C5DBFA;
+    --blue-fg:   #1D3461;
+    --green-bg:  #EDFAF3;
+    --green-bd:  #A8E6C0;
+    --green-fg:  #1A4523;
+    --amber-bg:  #FFF8EB;
+    --amber-bd:  #F0D898;
+    --amber-fg:  #6B3A00;
+    --purple-bg: #F5EEFF;
+    --purple-bd: #CAAEF8;
+    --purple-fg: #35136B;
+    --accent:    #111111;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Outfit', sans-serif;
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,248,245,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 54px;
+  }
+  .nav-brand {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    font-weight: 500; color: var(--ink); text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a {
+    font-size: 13px; color: var(--ink2); text-decoration: none;
+    font-weight: 400; transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink) !important; color: #fff !important;
+    padding: 7px 16px; border-radius: 7px; font-weight: 500 !important;
+    font-size: 12.5px !important; transition: opacity 0.15s !important;
+  }
+  .nav-cta:hover { opacity: 0.82 !important; color: #fff !important; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 760px; margin: 0 auto;
+    padding: 100px 32px 80px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--rule); border-radius: 20px;
+    padding: 5px 14px; margin-bottom: 28px;
+    background: var(--white);
+  }
+  .hero-eyebrow span { color: #2ECC71; font-size: 9px; }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(38px, 6vw, 62px);
+    font-weight: 400; line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; }
+  .hero-sub {
+    font-size: 17px; color: var(--ink2); font-weight: 300;
+    max-width: 520px; margin: 0 auto 36px; line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--ink); color: #fff;
+    padding: 13px 28px; border-radius: 9px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    transition: opacity 0.15s; letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { opacity: 0.82; }
+  .btn-secondary {
+    background: var(--white); color: var(--ink);
+    padding: 13px 28px; border-radius: 9px;
+    font-size: 14px; font-weight: 400; text-decoration: none;
+    border: 1px solid var(--rule); transition: border-color 0.15s;
+  }
+  .btn-secondary:hover { border-color: #CCC; }
+
+  /* ── BADGES ── */
+  .badges {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-top: 48px;
+  }
+  .badge {
+    font-family: 'DM Mono', monospace; font-size: 10.5px;
+    padding: 4px 12px; border-radius: 20px;
+    border: 1px solid var(--rule); background: var(--white);
+    color: var(--ink2); font-weight: 500;
+  }
+  .badge.green { background: var(--green-bg); border-color: var(--green-bd); color: var(--green-fg); }
+  .badge.blue  { background: var(--blue-bg);  border-color: var(--blue-bd);  color: var(--blue-fg); }
+  .badge.amber { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber-fg); }
+  .badge.purple{ background: var(--purple-bg);border-color: var(--purple-bd);color: var(--purple-fg);}
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 32px; }
+  section + section { border-top: 1px solid var(--rule); }
+  .section-inner { max-width: 800px; margin: 0 auto; }
+  .section-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 4vw, 38px); font-weight: 400;
+    line-height: 1.2; letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  h2 em { font-style: italic; }
+  .lead {
+    font-size: 16px; color: var(--ink2); font-weight: 300;
+    max-width: 600px; margin-bottom: 40px; line-height: 1.75;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+  .compare-table th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink3); padding: 10px 16px;
+    border-bottom: 1.5px solid var(--rule); text-align: left;
+  }
+  .compare-table td {
+    padding: 13px 16px; border-bottom: 1px solid var(--rule);
+    font-size: 14px; color: var(--ink2); vertical-align: middle;
+  }
+  .compare-table td:first-child { color: var(--ink); font-weight: 500; }
+  .compare-table td.no  { color: #C0392B; }
+  .compare-table td.yes { color: #27AE60; }
+  .compare-table td.warn{ color: #E67E22; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tbody tr:hover td { background: rgba(0,0,0,0.015); }
+
+  /* ── PIPELINE STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 36px; }
+  .step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--rule);
+    transition: background 0.15s;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ink); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-body h4 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .step-body p  { font-size: 13.5px; color: var(--ink2); font-weight: 300; line-height: 1.6; }
+  .step-tech {
+    display: inline-block; margin-top: 6px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--ink3); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 2px 8px; background: var(--white);
+  }
+
+  /* ── DIAGRAMS ── */
+  .diagram-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-top: 32px;
+  }
+  @media(max-width: 600px){ .diagram-cards { grid-template-columns: 1fr; } }
+  .diagram-card {
+    background: var(--white); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 28px 24px;
+    text-decoration: none; color: inherit;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: block;
+  }
+  .diagram-card:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+    transform: translateY(-2px);
+  }
+  .diagram-card .dc-icon { font-size: 28px; margin-bottom: 14px; }
+  .diagram-card h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+  .diagram-card p  { font-size: 13px; color: var(--ink2); font-weight: 300; line-height: 1.6; }
+  .diagram-card .dc-link {
+    margin-top: 14px; font-family: 'DM Mono', monospace;
+    font-size: 10.5px; color: var(--ink3);
+  }
+
+  /* ── STACK ── */
+  .stack-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px; margin-top: 32px;
+  }
+  .stack-card {
+    background: var(--white); border: 1px solid var(--rule);
+    border-radius: 10px; padding: 18px 16px;
+  }
+  .stack-card .sc-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink3); margin-bottom: 6px;
+  }
+  .stack-card .sc-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .stack-card .sc-sub  { font-size: 11.5px; color: var(--ink2); font-weight: 300; }
+
+  /* ── IMPORT CTA ── */
+  .import-box {
+    background: var(--ink); color: #fff;
+    border-radius: 16px; padding: 52px 48px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .import-box .ib-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
+  }
+  .import-box h2 { color: #fff; margin-bottom: 10px; }
+  .import-box p  { color: rgba(255,255,255,0.6); font-weight: 300; font-size: 15px; margin-bottom: 28px; }
+  .import-steps {
+    display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;
+  }
+  .import-step {
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .import-step .is-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: rgba(255,255,255,0.5); flex-shrink: 0; margin-top: 1px;
+  }
+  .import-step .is-text { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 300; line-height: 1.5; }
+  .import-step .is-text strong { color: #fff; font-weight: 500; }
+  .import-box .btn-white {
+    display: inline-block;
+    background: #fff; color: var(--ink);
+    padding: 13px 28px; border-radius: 9px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    transition: opacity 0.15s; align-self: flex-start;
+  }
+  .import-box .btn-white:hover { opacity: 0.88; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer p { font-size: 12px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+  footer a { color: var(--ink3); text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  /* ── FADE-IN ── */
+  .fade-in { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media(max-width: 600px){
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 60px 20px 52px; }
+    section { padding: 52px 20px; }
+    .import-box { padding: 36px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-brand">talk-to-db-pro</a>
+  <div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#diagrams">Diagrams</a>
+    <a href="#stack">Stack</a>
+    <a href="#import">Import</a>
+    <a href="https://github.com/LifeLongLaugh/talk-to-db-pro" class="nav-cta">GitHub →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section style="padding-bottom: 0; border-top: none;">
+  <div class="hero fade-in">
+    <div class="hero-eyebrow">
+      <span>●</span> Live chatbot available
+    </div>
+    <h1>Ask your docs<br><em>anything</em></h1>
+    <p class="hero-sub">
+      A production-grade RAG pipeline that turns technical documentation into a conversational AI — with cited, grounded answers. Built on free tiers. $0/month.
+    </p>
+    <div class="hero-actions">
+      <a href="https://udify.app/chat/1FtFMvw4odmYZ0KO" class="btn-primary" target="_blank">
+        🚀 Try the live chatbot
+      </a>
+      <a href="https://github.com/LifeLongLaugh/talk-to-db-pro" class="btn-secondary" target="_blank">
+        View on GitHub
+      </a>
+    </div>
+    <div class="badges">
+      <span class="badge blue">Dify Cloud</span>
+      <span class="badge">Qdrant Vector DB</span>
+      <span class="badge amber">Groq / Qwen3-32B</span>
+      <span class="badge purple">Jina Embeddings v3</span>
+      <span class="badge">Jina Reranker v2</span>
+      <span class="badge green">$0 / month</span>
+      <span class="badge">751 vectors</span>
+      <span class="badge">17 pipeline nodes</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT IS RAG ── -->
+<section id="what-is-rag">
+  <div class="section-inner fade-in">
+    <div class="section-label">For non-technical readers</div>
+    <h2>Why RAG beats<br><em>regular AI</em></h2>
+    <p class="lead">
+      Standard AI answers from memory — a frozen snapshot of training data. 
+      RAG gives the AI a library to look things up in before answering. 
+      Every claim is traceable back to your source documents.
+    </p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>Regular AI</th>
+          <th>RAG (this project)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Knows your internal documents</td><td class="no">✗ No</td><td class="yes">✓ Yes</td></tr>
+        <tr><td>Answers from your own content</td><td class="no">✗ No</td><td class="yes">✓ Yes</td></tr>
+        <tr><td>Risk of hallucination</td><td class="warn">⚠ High</td><td class="yes">✓ Heavily mitigated</td></tr>
+        <tr><td>Cites sources</td><td class="no">✗ No</td><td class="yes">✓ Yes — with filenames</td></tr>
+        <tr><td>Works with private data</td><td class="no">✗ No</td><td class="yes">✓ Yes</td></tr>
+        <tr><td>Stays current as docs change</td><td class="no">✗ No</td><td class="yes">✓ Re-ingest to update</td></tr>
+        <tr><td>Understands follow-up questions</td><td class="warn">⚠ Sometimes</td><td class="yes">✓ Conversation memory</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how-it-works">
+  <div class="section-inner fade-in">
+    <div class="section-label">The pipeline</div>
+    <h2>8 stages from<br><em>question to answer</em></h2>
+    <p class="lead">Every query travels through a multi-stage retrieval and synthesis pipeline — not just a single LLM call.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Natural language question</h4>
+          <p>You ask anything, in plain English, typos and all. The system handles ambiguity in the next step.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Query expansion</h4>
+          <p>A lightweight AI rewrites and expands your question — fixing typos, adding synonyms, making implicit context explicit — to maximise how much relevant content gets retrieved.</p>
+          <span class="step-tech">Llama 3.1 8B · Groq</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Semantic embedding</h4>
+          <p>Your expanded question is converted into a 1024-dimensional vector representing its meaning — not just its keywords. This enables matching even when the wording differs from the documentation.</p>
+          <span class="step-tech">Jina Embeddings v3 · 1024-dim cosine</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Intent routing</h4>
+          <p>The system classifies your original query to decide the best search strategy. Named components → filtered dual-path search. Conceptual questions → unified search across all 751 vectors.</p>
+          <span class="step-tech">Regex classifier · 2 routes</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Vector search</h4>
+          <p>Qdrant Cloud retrieves the passages whose meaning is most similar to your question, using cosine similarity. Up to 10 candidates are returned.</p>
+          <span class="step-tech">Qdrant Cloud · 751 vectors</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h4>Neural reranking</h4>
+          <p>A cross-encoder model reads your question and each candidate passage together — far more accurate than initial similarity matching — and selects the top 5 most relevant passages.</p>
+          <span class="step-tech">Jina Reranker v2 · top_n=5</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h4>Grounded synthesis</h4>
+          <p>A large language model generates an answer using only the 5 retrieved passages as source material. It is explicitly instructed to cite passage numbers inline and omit anything not traceable word-for-word.</p>
+          <span class="step-tech">Qwen3-32B · Groq · /no_think</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <h4>Cited answer</h4>
+          <p>You receive a response with inline citations [1][2] and a Sources section listing originating filenames. Every claim is verifiable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DIAGRAMS ── -->
+<section id="diagrams">
+  <div class="section-inner fade-in">
+    <div class="section-label">Interactive visualisations</div>
+    <h2>See the pipeline<br><em>in motion</em></h2>
+    <p class="lead">Two animated diagrams — one for every reader. Watch a real query trace its path from input to answer.</p>
+
+    <div class="diagram-cards">
+      <a href="./logical-flow.html" class="diagram-card">
+        <div class="dc-icon">🔀</div>
+        <h3>Logical Flow</h3>
+        <p>The conceptual stages in plain English. Swimlane layout with decision diamond for the routing step. For all audiences.</p>
+        <div class="dc-link">logical-flow.html → open diagram</div>
+      </a>
+      <a href="./pipeline-diagram.html" class="diagram-card">
+        <div class="dc-icon">⚙️</div>
+        <h3>Pipeline Diagram</h3>
+        <p>Every node, model name, API endpoint, and data type in the actual system. For technical readers.</p>
+        <div class="dc-link">pipeline-diagram.html → open diagram</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── STACK ── -->
+<section id="stack">
+  <div class="section-inner fade-in">
+    <div class="section-label">Technology</div>
+    <h2>The full stack —<br><em>all free tiers</em></h2>
+    <p class="lead">Four external services stitched together by Dify's visual workflow builder. No servers managed, no infra cost.</p>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="sc-label">Orchestration</div>
+        <div class="sc-name">Dify Cloud</div>
+        <div class="sc-sub">Chatflow v0.6.0<br>17-node pipeline</div>
+      </div>
+      <div class="stack-card">
+        <div class="sc-label">LLM · Rewriter</div>
+        <div class="sc-name">Llama 3.1 8B</div>
+        <div class="sc-sub">via Groq<br>Query expansion</div>
+      </div>
+      <div class="stack-card">
+        <div class="sc-label">LLM · Synthesis</div>
+        <div class="sc-name">Qwen3-32B</div>
+        <div class="sc-sub">via Groq<br>Grounded answers</div>
+      </div>
+      <div class="stack-card">
+        <div class="sc-label">Embeddings</div>
+        <div class="sc-name">Jina v3</div>
+        <div class="sc-sub">1024-dim cosine<br>Semantic search</div>
+      </div>
+      <div class="stack-card">
+        <div class="sc-label">Reranker</div>
+        <div class="sc-name">Jina Reranker v2</div>
+        <div class="sc-sub">Cross-encoder<br>top_n = 5</div>
+      </div>
+      <div class="stack-card">
+        <div class="sc-label">Vector DB</div>
+        <div class="sc-name">Qdrant Cloud</div>
+        <div class="sc-sub">751 vectors<br>GCP europe-west3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── IMPORT ── -->
+<section id="import">
+  <div class="section-inner fade-in">
+    <div class="import-box">
+      <div class="ib-label">Run it yourself</div>
+      <h2>Import this pipeline<br><em>over your own docs</em></h2>
+      <p>The Dify DSL export is included in this repo with API keys removed. You can have your own version running in under an hour — all on free tiers.</p>
+
+      <div class="import-steps">
+        <div class="import-step">
+          <div class="is-num">1</div>
+          <div class="is-text">Sign up for <strong>Dify Cloud, Qdrant Cloud, Groq, and Jina AI</strong> — all free</div>
+        </div>
+        <div class="import-step">
+          <div class="is-num">2</div>
+          <div class="is-text">Create a <strong>Qdrant collection</strong> with named dense vectors (1024-dim, cosine)</div>
+        </div>
+        <div class="import-step">
+          <div class="is-num">3</div>
+          <div class="is-text"><strong>Ingest your documents</strong> using the payload schema in the import guide</div>
+        </div>
+        <div class="import-step">
+          <div class="is-num">4</div>
+          <div class="is-text"><strong>Import the DSL</strong> from <code style="font-family:DM Mono,monospace;opacity:0.7">dify-workflow/talk-to-db-pro.yml</code> into a new Dify Chatflow</div>
+        </div>
+        <div class="import-step">
+          <div class="is-num">5</div>
+          <div class="is-text">Set <strong>3 environment variables</strong> in Dify: <code style="font-family:DM Mono,monospace;opacity:0.7">JINA_API_KEY</code>, <code style="font-family:DM Mono,monospace;opacity:0.7">QDRANT_API_KEY</code>, <code style="font-family:DM Mono,monospace;opacity:0.7">QDRANT_POINTS_URL</code></div>
+        </div>
+        <div class="import-step">
+          <div class="is-num">6</div>
+          <div class="is-text"><strong>Publish and chat</strong> — your docs are now conversational</div>
+        </div>
+      </div>
+
+      <a href="https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/IMPORT_GUIDE.md" class="btn-white" target="_blank">
+        Read the full import guide →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>Built by <a href="https://github.com/LifeLongLaugh">@LifeLongLaugh</a> · hobby project · $0/month infrastructure</p>
+  <p>
+    <a href="https://github.com/LifeLongLaugh/talk-to-db-pro">GitHub</a> ·
+    <a href="https://udify.app/chat/1FtFMvw4odmYZ0KO">Live chatbot</a> ·
+    <a href="./pipeline-diagram.html">Pipeline diagram</a> ·
+    <a href="./logical-flow.html">Logical flow</a>
+  </p>
+</footer>
+
+<script>
+  // Fade-in on scroll
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Fire hero immediately
+  document.querySelector('.hero').classList.add('visible');
+</script>
+
+</body>
+</html>
