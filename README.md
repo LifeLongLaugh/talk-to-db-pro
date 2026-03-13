@@ -104,11 +104,11 @@ Talk to DB PRO is a **production-grade RAG pipeline** — not a basic demo. It u
 
 ## 🏗️ How it works
 
-### Interactive diagrams
+### Diagrams
 
 | Diagram | Audience |
 |---|---|
-| [**Pipeline Diagram**](https://LifeLongLaugh.github.io/talk-to-db-pro/Docs/Pipeline_Diagram.gif) | Technical — every node, model, and API call |
+| [**Pipeline Diagram**](./Docs/Pipeline_Diagram.gif) | Technical — every node, model, and API call |
 
 ### The 8 stages
 
@@ -218,8 +218,7 @@ talk-to-db-pro/
 ├── IMPORT_GUIDE.md                  ← Step-by-step: run this yourself
 ├── docs/
 │   ├── index.html                   ← GitHub Pages landing page
-│   ├── pipeline-diagram.html        ← Animated node-wise technical diagram
-│   └── logical-flow.html            ← Animated logical flow diagram
+│   ├── Pipeline_Diagram.gif        ← Animated node-wise technical diagram
 ├── dify-workflow/
 │   └── talk-to-db-pro.yml           ← Dify DSL export (API keys removed)
 └── report/
