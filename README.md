@@ -218,7 +218,7 @@ talk-to-db-pro/
 ├── IMPORT_GUIDE.md                  ← Step-by-step: run this yourself
 ├── docs/
 │   ├── index.html                   ← GitHub Pages landing page
-│   ├── Pipeline_Diagram.gif        ← Animated node-wise technical diagram
+│   ├── Pipeline_Diagram.gif         ← Animated node-wise technical diagram
 ├── dify-workflow/
 │   └── talk-to-db-pro.yml           ← Dify DSL export (API keys removed)
 └── report/
