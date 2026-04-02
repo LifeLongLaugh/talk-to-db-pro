@@ -2,15 +2,14 @@
 
 > **Ask a question in plain English. Get a cited, grounded answer from technical documentation — instantly.**
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Try%20it%20now-black?style=for-the-badge)](https://udify.app/chat/1FtFMvw4odmYZ0KO)
-[![GitHub Pages](https://img.shields.io/badge/📄%20Project%20Page-GitHub%20Pages-222?style=for-the-badge)](https://LifeLongLaugh.github.io/talk-to-db-pro)
+[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80%20Live%20Demo-Try%20it%20now-black?style=for-the-badge)](https://udify.app/chat/1FtFMvw4odmYZ0KO)
+[![GitHub Pages](https://img.shields.io/badge/%F0%9F%93%84%20Project%20Page-GitHub%20Pages-222?style=for-the-badge)](https://LifeLongLaugh.github.io/talk-to-db-pro)
 
-![Dify](https://img.shields.io/badge/Dify%20Cloud-Chatflow-blue?style=flat-square)
-![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20DB-red?style=flat-square)
-![Groq](https://img.shields.io/badge/Groq-Qwen3--32B%20%2B%20Llama%203.1-orange?style=flat-square)
-![Jina](https://img.shields.io/badge/Jina%20AI-Embeddings%20%2B%20Reranker-purple?style=flat-square)
-![Cost](https://img.shields.io/badge/Infrastructure%20cost-%240%2Fmonth-brightgreen?style=flat-square)
-![Vectors](https://img.shields.io/badge/Knowledge%20base-751%20vectors-teal?style=flat-square)
+[![Dify](https://img.shields.io/badge/Dify%20Cloud-Chatflow-blue?style=flat-square)](https://dify.ai)
+[![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20DB-red?style=flat-square)](https://qdrant.tech)
+[![Groq](https://img.shields.io/badge/Groq-Qwen3--32B%20%2B%20Llama%203.1-orange?style=flat-square)](https://groq.com)
+[![Jina](https://img.shields.io/badge/Jina%20AI-Embeddings%20%2B%20Reranker-purple?style=flat-square)](https://jina.ai)
+[![Vectors](https://img.shields.io/badge/Knowledge%20base-751%20vectors-teal?style=flat-square)](https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/report/Talk_to_DB_PRO_Report.md)
 
 ---
 
@@ -19,6 +18,7 @@
 **[→ Open the chatbot](https://udify.app/chat/1FtFMvw4odmYZ0KO)**
 
 Try asking:
+
 - *"What does ExecuteSQLRecord do?"*
 - *"How does Databridge Pro handle database connections?"*
 - *"Give me 2 processors that support SQL execution"*
@@ -34,23 +34,24 @@ Try asking:
 3. [How it works](#%EF%B8%8F-how-it-works)
 4. [Technology stack](#-technology-stack)
 5. [Key engineering decisions](#%EF%B8%8F-key-engineering-decisions)
-6. [Import this project yourself](#-import-this-project-yourself)
-7. [Repository structure](#-repository-structure)
+6. [Skills demonstrated](#-skills-demonstrated)
+7. [Import this project yourself](#-import-this-project-yourself)
+8. [Repository structure](#-repository-structure)
 
 ---
 
 ## What is this?
 
-**Talk to DB PRO** is a production-grade conversational RAG (Retrieval-Augmented Generation) system. It turns a large collection of dry technical documentation into an AI assistant you can have a natural conversation with.
+**Talk to DB PRO** is a conversational RAG (Retrieval-Augmented Generation) pipeline — an 8-stage system that turns a large collection of dry technical documentation into an AI assistant you can have a natural conversation with.
 
 It covers two corpora:
 
 - **HxGN Databridge Pro** — a data integration platform used in enterprise asset management. Documentation spans multiple markdown files previously only searchable by keyword.
 - **Apache NiFi processors & controller services** — 200+ data flow components, each with complex configuration properties that engineers frequently need to look up.
 
-Instead of manually ctrl+F-ing through PDFs and markdown files, engineers can now ask questions in plain English and receive precise, cited answers in seconds — with conversation memory across follow-up questions.
+Instead of manually ctrl+F-ing through PDFs and markdown files, engineers can ask questions in plain English and receive precise, cited answers in seconds — with conversation memory across follow-up questions.
 
-**Built entirely on free tiers. Infrastructure cost: $0/month.**
+> **Data note:** Built entirely on publicly available HxGN Databridge Pro documentation. No proprietary or confidential company data is stored, indexed, or exposed in this repository or the live demo.
 
 ---
 
@@ -88,8 +89,8 @@ Answer includes citations — every claim is verifiable
 
 ### Why RAG wins
 
-| | Regular AI | RAG (this project) |
-|---|---|---|
+|  | Regular AI | RAG (this project) |
+| --- | --- | --- |
 | Knows your internal documents | ❌ No | ✅ Yes |
 | Answers from your own content | ❌ No | ✅ Yes |
 | Risk of hallucination | ⚠️ High | ✅ Heavily mitigated |
@@ -98,7 +99,7 @@ Answer includes citations — every claim is verifiable
 | Stays current as docs change | ❌ No | ✅ Re-ingest to update |
 | Understands follow-up questions | ⚠️ Sometimes | ✅ Conversation memory |
 
-Talk to DB PRO is a **production-grade RAG pipeline** — not a basic demo. It uses query expansion, semantic vector search, neural reranking, and a grounding-first synthesis prompt to produce answers that can be traced back to source documents.
+This pipeline uses query expansion, semantic vector search, neural reranking, and a grounding-first synthesis prompt to produce answers that can be traced back to source documents — the same pattern used in production search engines.
 
 ---
 
@@ -107,8 +108,8 @@ Talk to DB PRO is a **production-grade RAG pipeline** — not a basic demo. It u
 ### Diagrams
 
 | Diagram | Audience |
-|---|---|
-| [**Pipeline Diagram**](./Docs/Pipeline_Diagram.gif) | Technical — every node, model, and API call |
+| --- | --- |
+| [**Pipeline Diagram**](/docs/Pipeline_Diagram.gif) | Technical — every node, model, and API call |
 
 ### The 8 stages
 
@@ -157,19 +158,19 @@ User Input
 ## 🧰 Technology stack
 
 | Layer | Technology | Detail |
-|-------|-----------|--------|
-| Orchestration | Dify Cloud (Chatflow v0.6.0) | Visual workflow builder, runtime, API gateway |
-| LLM — Rewriter | Groq + Llama 3.1 8B Instant | `temp=0` · query expansion and clarification |
-| LLM — Synthesis | Groq + Qwen3-32B | `temp=0.1` · `/no_think` · grounded citation synthesis |
-| Embeddings | Jina Embeddings v3 | 1024-dim, cosine, `task=retrieval.query` |
-| Reranker | Jina Reranker v2 | `jina-reranker-v2-base-multilingual` · `top_n=5` |
-| Vector Database | Qdrant Cloud | GCP europe-west3 · named dense + sparse vectors |
+| --- | --- | --- |
+| Orchestration | [Dify Cloud](https://dify.ai) (Chatflow v0.6.0) | Visual workflow builder, runtime, API gateway |
+| LLM — Rewriter | [Groq](https://groq.com) + Llama 3.1 8B Instant | `temp=0` · query expansion and clarification |
+| LLM — Synthesis | [Groq](https://groq.com) + Qwen3-32B | `temp=0.1` · `/no_think` · grounded citation synthesis |
+| Embeddings | [Jina Embeddings v3](https://jina.ai) | 1024-dim, cosine, `task=retrieval.query` |
+| Reranker | [Jina Reranker v2](https://jina.ai) | `jina-reranker-v2-base-multilingual` · `top_n=5` |
+| Vector Database | [Qdrant Cloud](https://qdrant.tech) | GCP europe-west3 · named dense + sparse vectors |
 | HTTP | Dify HTTP Request nodes | Full control over all external API calls |
 
 ### Knowledge base
 
 | Dataset | Points | Content |
-|---------|--------|---------|
+| --- | --- | --- |
 | `technical_docs` | 539 | HxGN Databridge Pro documentation (chunked markdown) |
 | `processors_services` | 212 | NiFi processor & controller service definitions |
 | **Total** | **751** | Named vectors: `dense` (1024-dim, cosine) + `sparse` (BM25, ingested) |
@@ -182,15 +183,33 @@ User Input
 
 **Vector as JSON string (500-element workaround)** — Dify code nodes cap array outputs at 500 elements. Jina v3 produces 1024-dimensional vectors. Solution: `json.dumps(embedding)` serialises it as a string, which is then injected *unquoted* into the Qdrant HTTP request body. Qdrant's JSON parser receives a valid float array at the `query` field.
 
-**HTTP nodes over the Qdrant plugin** — the `yaxuanm/qdrant` Dify plugin silently ignores named vector parameters and calls Qdrant's legacy endpoint, returning HTTP 400 on named-vector collections. Raw HTTP Request nodes calling `/points/query` with `"using": "dense"` give complete control.
+**HTTP nodes over the Qdrant plugin** — the `yaxuanm/qdrant` Dify plugin silently ignores named vector parameters and calls Qdrant's legacy endpoint, returning HTTP 400 on named-vector collections. Raw HTTP Request nodes calling `/points/query` with `"using": "dense"` give complete control and remove the plugin abstraction failure.
 
 **Bi-encoder + cross-encoder hybrid retrieval** — embedding similarity (bi-encoder) is fast but approximate; the reranker (cross-encoder) reads query and document *together* for significantly higher precision. Two stages: recall then precision — the same pattern used in production search engines.
 
 **`/no_think` directive on Qwen3-32B** — Qwen3's extended reasoning mode produces verbose `<think>` blocks. For a RAG synthesis task this overhead is unnecessary and pollutes the user-facing output. The `/no_think` directive at the top of the system prompt disables this mode cleanly.
 
-**Two-LLM architecture** — Llama 3.1 8B handles query rewriting (fast, cheap, the task is simple); Qwen3-32B handles synthesis (large model needed for citation-accurate grounding). Avoids paying latency cost of a 32B model where an 8B is sufficient.
+**Two-LLM architecture** — Llama 3.1 8B handles query rewriting (fast, the task is simple); Qwen3-32B handles synthesis (large model needed for citation-accurate grounding). Avoids paying the latency cost of a 32B model where an 8B is sufficient.
 
 **Grounding-first synthesis prompt** — the synthesis prompt instructs Qwen3-32B: *"If a claim cannot be traced to a specific passage word-for-word, omit it."* Combined with `/no_think`, this significantly reduces hallucination compared to standard prompting.
+
+**Zero-dependency architecture** — the pipeline runs entirely on free-tier services (Dify Cloud, Qdrant Cloud, Groq, Jina AI) with no vendor lock-in. This was a deliberate design constraint: every layer is independently substitutable. Swap the embedding model, the LLM, or the vector store without re-architecting the pipeline. Monthly infrastructure cost: **$0**.
+
+---
+
+## 🎯 Skills demonstrated
+
+A condensed summary for quick reference — the [full technical report](report/Talk_to_DB_PRO_Report.md) covers every node specification, all engineering decisions, 12 bugs found and resolved, and a performance analysis.
+
+**AI / ML Engineering** — designed and built a multi-stage RAG pipeline; applied bi-encoder + cross-encoder hybrid retrieval; implemented intent-based query routing with deliberate fallback logic; debugged vector dimension mismatches, API schema issues, and score calibration problems.
+
+**API Integration** — integrated four external APIs (Groq, Jina Embeddings, Jina Reranker, Qdrant) via HTTP with full request/response control; diagnosed and worked around a Dify platform constraint (500-element array cap) with a serialisation workaround.
+
+**Data Engineering** — designed a dual-dataset Qdrant collection schema with named dense and sparse vectors; defined payload field indexing strategy for efficient filter-based retrieval; chunked and ingested 751 documents across two corpus types with different metadata schemas.
+
+**Prompt Engineering** — crafted query expansion prompts that prevent over-engineering the rewritten query; designed grounding-first system prompts with explicit hallucination prevention rules; used `/no_think` to control model reasoning mode output.
+
+**Debugging** — traced 12 distinct bugs across 5 YAML iterations through systematic log and error analysis; identified a Dify plugin implementation bug by reading raw Qdrant HTTP error responses.
 
 ---
 
@@ -198,13 +217,14 @@ User Input
 
 Want to run your own version of this pipeline over *your* documentation?
 
-**[→ Full import guide: IMPORT_GUIDE.md](./IMPORT_GUIDE.md)**
+**[→ Full import guide: IMPORT\_GUIDE.md](https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/IMPORT_GUIDE.md)**
 
 Quick overview:
+
 1. Sign up for Dify Cloud, Qdrant Cloud, Groq, and Jina AI — all free
 2. Create a Qdrant collection with named dense vectors (1024-dim, cosine)
 3. Ingest your documents with the payload schema described in the guide
-4. Import [`dify-workflow/talk-to-db-pro.yml`](./dify-workflow/talk-to-db-pro.yml) into Dify
+4. Import [`dify-workflow/talk-to-db-pro.yml`](https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/dify-workflow/talk-to-db-pro.yml) into Dify
 5. Set three environment variables: `JINA_API_KEY`, `QDRANT_API_KEY`, `QDRANT_POINTS_URL`
 6. Publish and chat
 
@@ -218,7 +238,7 @@ talk-to-db-pro/
 ├── IMPORT_GUIDE.md                  ← Step-by-step: run this yourself
 ├── docs/
 │   ├── index.html                   ← GitHub Pages landing page
-│   ├── Pipeline_Diagram.gif         ← Animated node-wise technical diagram
+│   └── Pipeline_Diagram.gif         ← Animated node-wise technical diagram
 ├── dify-workflow/
 │   └── talk-to-db-pro.yml           ← Dify DSL export (API keys removed)
 └── report/
@@ -229,12 +249,11 @@ talk-to-db-pro/
 
 ## 📄 Full technical report
 
-The complete project report — every node specification, all engineering decisions, 12 bugs found and resolved, performance analysis, and future improvements — is at [`report/Talk_to_DB_PRO_Report.md`](./report/Talk_to_DB_PRO_Report.md).
+The complete project report — every node specification, all engineering decisions, 12 bugs found and resolved, performance analysis, and future improvements — is at [`report/Talk_to_DB_PRO_Report.md`](https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/report/Talk_to_DB_PRO_Report.md).
 
 ---
 
 ## 🙋 Author
 
-Built by [@LifeLongLaugh](https://github.com/LifeLongLaugh).
-
-AI Agents used: Claude, Gemini, Copilot.
+**Vishal Kolekar**  
+[LinkedIn](https://www.linkedin.com/in/v-kolekar) · [GitHub](https://github.com/LifeLongLaugh)
