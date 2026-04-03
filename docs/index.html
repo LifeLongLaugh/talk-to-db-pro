@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Talk to DB PRO — RAG Pipeline</title>
-<meta name="description" content="A production-grade conversational RAG system over technical documentation. Built on Dify, Qdrant, Groq, and Jina AI. $0/month.">
+<title>Talk to DB PRO — Conversational RAG Pipeline</title>
+<meta name="description" content="A conversational RAG pipeline over HxGN Databridge Pro technical documentation. Ask questions in plain English, get cited answers. Built on Dify, Qdrant, Groq, and Jina AI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -318,7 +318,8 @@
     </div>
     <h1>Ask your docs<br><em>anything</em></h1>
     <p class="hero-sub">
-      A production-grade RAG pipeline that turns technical documentation into a conversational AI — with cited, grounded answers. Built on free tiers. $0/month.
+      An 8-stage RAG pipeline that turns technical documentation into a conversational AI —
+      with cited, grounded answers and conversation memory across follow-up questions.
     </p>
     <div class="hero-actions">
       <a href="https://udify.app/chat/1FtFMvw4odmYZ0KO" class="btn-primary" target="_blank">
@@ -334,8 +335,7 @@
       <span class="badge amber">Groq / Qwen3-32B</span>
       <span class="badge purple">Jina Embeddings v3</span>
       <span class="badge">Jina Reranker v2</span>
-      <span class="badge green">$0 / month</span>
-      <span class="badge">751 vectors</span>
+      <span class="badge green">Zero vendor lock-in</span>
       <span class="badge">17 pipeline nodes</span>
     </div>
   </div>
@@ -347,8 +347,8 @@
     <div class="section-label">For non-technical readers</div>
     <h2>Why RAG beats<br><em>regular AI</em></h2>
     <p class="lead">
-      Standard AI answers from memory — a frozen snapshot of training data. 
-      RAG gives the AI a library to look things up in before answering. 
+      Standard AI answers from memory — a frozen snapshot of training data.
+      RAG gives the AI a library to look things up in before answering.
       Every claim is traceable back to your source documents.
     </p>
 
@@ -408,7 +408,7 @@
         <div class="step-num">4</div>
         <div class="step-body">
           <h4>Intent routing</h4>
-          <p>The system classifies your original query to decide the best search strategy. Named components → filtered dual-path search. Conceptual questions → unified search across all 751 vectors.</p>
+          <p>The system classifies your original query to decide the best search strategy. Named components trigger a filtered dual-path search. Conceptual questions use a unified search across all 751 vectors.</p>
           <span class="step-tech">Regex classifier · 2 routes</span>
         </div>
       </div>
@@ -452,12 +452,12 @@
   <div class="section-inner fade-in">
     <div class="section-label">Visualisations</div>
     <h2>See the pipeline<br><em>in motion</em></h2>
-    <p class="lead">An animated diagram for every reader. Watch a real query trace its path from input to answer.</p>
+    <p class="lead">An animated diagram tracing a real query from input to answer — every node, model, and API call.</p>
 
     <div class="diagram-cards">
       <a href="./Pipeline_Diagram.gif" class="diagram-card">
         <div class="dc-icon">🔀</div>
-        <h3>>Pipeline Diagram</h3>
+        <h3>Pipeline Diagram</h3>
         <p>Every node, model name, API endpoint, and data type in the actual system. For technical readers.</p>
         <div class="dc-link">Pipeline_Diagram.gif → open diagram</div>
       </a>
@@ -469,8 +469,8 @@
 <section id="stack">
   <div class="section-inner fade-in">
     <div class="section-label">Technology</div>
-    <h2>The full stack —<br><em>all free tiers</em></h2>
-    <p class="lead">Four external services stitched together by Dify's visual workflow builder. No servers managed, no infra cost.</p>
+    <h2>The full stack —<br><em>substitutable by design</em></h2>
+    <p class="lead">Four external services orchestrated by Dify's visual workflow builder. Every layer is independently replaceable — swap the embedding model, vector store, or LLM without re-architecting the pipeline.</p>
 
     <div class="stack-grid">
       <div class="stack-card">
@@ -513,12 +513,12 @@
     <div class="import-box">
       <div class="ib-label">Run it yourself</div>
       <h2>Import this pipeline<br><em>over your own docs</em></h2>
-      <p>The Dify DSL export is included in this repo with API keys removed. You can have your own version running in under an hour — all on free tiers.</p>
+      <p>The Dify DSL export is included in this repo with all API keys removed. Bring your own documents and you can have a working instance in under an hour.</p>
 
       <div class="import-steps">
         <div class="import-step">
           <div class="is-num">1</div>
-          <div class="is-text">Sign up for <strong>Dify Cloud, Qdrant Cloud, Groq, and Jina AI</strong> — all free</div>
+          <div class="is-text">Sign up for <strong>Dify Cloud, Qdrant Cloud, Groq, and Jina AI</strong> — all on free tiers</div>
         </div>
         <div class="import-step">
           <div class="is-num">2</div>
@@ -551,12 +551,14 @@
 
 <!-- ── FOOTER ── -->
 <footer>
-  <p>Built by <a href="https://github.com/LifeLongLaugh">@LifeLongLaugh</a> · hobby project · $0/month infrastructure</p>
+  <p>
+    Built by
+    <a href="https://www.linkedin.com/in/v-kolekar" target="_blank">Vishal Kolekar</a>
+  </p>
   <p>
     <a href="https://github.com/LifeLongLaugh/talk-to-db-pro">GitHub</a> ·
-    <a href="https://udify.app/chat/1FtFMvw4odmYZ0KO">Live chatbot</a> ·
-    <a href="./pipeline-diagram.html">Pipeline diagram</a> ·
-    <a href="./logical-flow.html">Logical flow</a>
+    <a href="https://udify.app/chat/1FtFMvw4odmYZ0KO" target="_blank">Live chatbot</a> ·
+    <a href="./Pipeline_Diagram.gif">Pipeline diagram</a>
   </p>
 </footer>
 
