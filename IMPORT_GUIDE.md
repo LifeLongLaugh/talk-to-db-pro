@@ -1,19 +1,21 @@
 # 📥 Import Guide — Run Talk to DB PRO Yourself
 
-This guide walks you through deploying your own version of Talk to DB PRO over your own documentation. Every service used has a **free tier** — total cost is $0/month.
+This guide walks you through deploying your own instance of Talk to DB PRO over your own documentation. The pipeline is domain-agnostic — the only things specific to HxGN Databridge Pro and NiFi are the documents ingested and a handful of regex patterns in the Intent Router. Everything else transfers directly to any document corpus.
+
+Every service used has a free tier. Total infrastructure cost: **$0/month**, with every layer independently substitutable if you later want to migrate to paid tiers.
 
 ---
 
 ## Prerequisites
 
-You will need free accounts on:
+Free accounts on:
 
 | Service | What it does | Sign up |
-|---------|-------------|---------|
+| --- | --- | --- |
 | [Dify Cloud](https://cloud.dify.ai) | Hosts and runs the pipeline | Free tier |
-| [Qdrant Cloud](https://cloud.qdrant.io) | Stores and searches your document vectors | Free tier (1 cluster, 1GB) |
+| [Qdrant Cloud](https://cloud.qdrant.io) | Stores and searches your document vectors | Free tier (1 cluster, 1 GB) |
 | [Groq](https://console.groq.com) | Runs Llama 3.1 8B and Qwen3-32B | Free tier |
-| [Jina AI](https://jina.ai) | Embedding and reranking models | Free tier (1M tokens/month) |
+| [Jina AI](https://jina.ai) | Embedding and reranking models | Free tier (1 M tokens/month) |
 
 ---
 
@@ -23,18 +25,19 @@ Before anything touches Qdrant or Dify, your raw documents need to be cleaned, c
 
 ### 0.1 Supported file formats
 
-The pipeline works with any format you can read into plain text. Recommended formats and how to handle each:
+The pipeline works with any format you can read into plain text:
 
 | Format | Recommended approach | Notes |
-|--------|---------------------|-------|
+| --- | --- | --- |
 | `.md` Markdown | Read directly with `open()` | Best format — structure is preserved, headings are natural chunk boundaries |
 | `.txt` Plain text | Read directly with `open()` | Split by paragraph or fixed token count |
 | `.pdf` PDF | Extract with `pdfplumber` or `pymupdf` | Watch for multi-column layouts and scanned pages |
 | `.docx` Word | Extract with `python-docx` | Headings map well to sections |
-| `.html` Web pages | Strip tags with `BeautifulSoup` | Remove nav, footer, sidebar content before chunking |
+| `.html` Web pages | Strip tags with `BeautifulSoup` | Remove nav, footer, and sidebar content before chunking |
 | `.json` Structured data | Flatten relevant fields to text strings | Used in this project for NiFi processor definitions |
 
 Install extraction libraries as needed:
+
 ```bash
 pip install pdfplumber python-docx beautifulsoup4 lxml
 ```
@@ -49,7 +52,7 @@ A chunk is a self-contained passage of text — typically a paragraph or section
 **Recommended chunk sizes:**
 
 | Corpus type | Chunk size | Overlap | Rationale |
-|-------------|-----------|---------|-----------|
+| --- | --- | --- | --- |
 | Technical documentation (prose) | 400–600 tokens | 80 tokens | Preserves full explanations; overlap prevents cutting mid-sentence |
 | Reference entries (processor/API definitions) | One entry per chunk | None | Each definition is already self-contained |
 | FAQs / Q&A pairs | One Q+A per chunk | None | Atomic units |
@@ -103,16 +106,21 @@ Every chunk must carry metadata that the pipeline uses for filtering, citations,
 
 ### 0.5 Verify ingestion
 
-Check your collection point count via the Qdrant dashboard.
+After uploading points, confirm the count via the Qdrant REST API:
 
-Look for `"points_count"` in the response. It should match your expected total.
+```bash
+curl "YOUR_CLUSTER_URL/collections/YOUR_COLLECTION_NAME" \
+  -H "api-key: YOUR_QDRANT_API_KEY"
+```
+
+Look for `"points_count"` in the response. It should match your expected total. If it's lower, check for upload errors or payload validation failures in your ingestion script.
 
 ---
 
 ### 0.6 Common file preparation mistakes
 
 | Mistake | Effect | Fix |
-|---------|--------|-----|
+| --- | --- | --- |
 | Chunks too large (1000+ tokens) | LLM context filled by one chunk; low precision | Keep chunks under 600 tokens |
 | Chunks too small (<50 tokens) | Fragments without enough context to answer questions | Merge short paragraphs before chunking |
 | Missing `text` field in payload | Result Mapper returns empty documents; answers say "insufficient information" | Always verify payload schema before uploading |
@@ -129,8 +137,8 @@ Look for `"points_count"` in the response. It should match your expected total.
 
 1. Log in to [Qdrant Cloud](https://cloud.qdrant.io)
 2. Create a new cluster — select the **Free** tier
-3. Note your **Cluster URL** (format: `https://xxxx-xxxx.cloud.qdrant.io:6333`)
-4. Create an **API key** under Access → API Keys. Copy it — you'll need it later.
+3. Note your **Cluster URL** (format: `https://YOUR_CLUSTER_ID.YOUR_REGION.gcp.cloud.qdrant.io:6333`)
+4. Create an **API key** under Access → API Keys
 
 ### 1.2 Create the collection
 
@@ -167,13 +175,13 @@ curl -X PUT "YOUR_CLUSTER_URL/collections/YOUR_COLLECTION_NAME/index" \
 
 ## Step 2 — Ingest your documents
 
-You need to chunk your documents, embed them with Jina Embeddings v3, and upload the resulting vectors to Qdrant.
+Chunk your documents, embed them with Jina Embeddings v3, and upload the resulting vectors to Qdrant.
 
 ### 2.1 Required payload schema
 
 Each point you upload to Qdrant must have at minimum:
 
-```json
+```python
 {
   "id": 1,
   "vector": {
@@ -214,7 +222,7 @@ def embed(texts: list[str]) -> list[list[float]]:
     return [item["embedding"] for item in response.json()["data"]]
 ```
 
-> **Note:** Use `task=retrieval.passage` when embedding documents for ingestion, and `task=retrieval.query` when embedding the user's question at query time (this is already set in the Dify workflow).
+> **Note:** Use `task=retrieval.passage` when embedding documents for ingestion, and `task=retrieval.query` when embedding the user's question at query time. This asymmetric task designation is how Jina v3 achieves better retrieval accuracy than symmetric embedding.
 
 ### 2.3 Upload to Qdrant
 
@@ -254,10 +262,10 @@ upload_points(points)
 ## Step 3 — Get your API keys
 
 | Key | Where to find it |
-|-----|----------------|
+| --- | --- |
 | `JINA_API_KEY` | [jina.ai](https://jina.ai) → Sign in → API Keys |
 | `QDRANT_API_KEY` | Qdrant Cloud → Your cluster → Access → API Keys |
-| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) → API Keys (used inside Dify model settings, not as an env var) |
+| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) → API Keys (configured inside Dify model settings, not as an env var) |
 
 Build your `QDRANT_POINTS_URL` — this is the full endpoint for vector search:
 
@@ -265,7 +273,8 @@ Build your `QDRANT_POINTS_URL` — this is the full endpoint for vector search:
 https://YOUR_CLUSTER_URL/collections/YOUR_COLLECTION_NAME/points/query
 ```
 
-Example:
+Example format:
+
 ```
 https://abc123.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/my_knowledge_base/points/query
 ```
@@ -282,7 +291,7 @@ https://abc123.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/my_knowledge_
 ### 4.2 Import the DSL
 
 1. In the Chatflow editor, click the **⋯ menu** (top right) → **Import DSL**
-2. Upload [`dify-workflow/talk-to-db-pro.yml`](./dify-workflow/talk-to-db-pro.yml)
+2. Upload [`dify-workflow/talk-to-db-pro.yml`](https://github.com/LifeLongLaugh/talk-to-db-pro/blob/main/dify-workflow/talk-to-db-pro.yml)
 3. The full 17-node pipeline will be imported
 
 ### 4.3 Add model providers
@@ -296,27 +305,37 @@ https://abc123.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/my_knowledge_
 In Dify, go to **Settings** → **Environment Variables** and add:
 
 | Variable | Value |
-|----------|-------|
+| --- | --- |
 | `JINA_API_KEY` | Your Jina AI API key |
 | `QDRANT_API_KEY` | Your Qdrant API key |
 | `QDRANT_POINTS_URL` | Full `/points/query` URL (from Step 3) |
 
-These are referenced in the workflow as `{{#env.JINA_API_KEY#}}` etc. — they are never hardcoded.
+These are referenced in the workflow as `{{#env.JINA_API_KEY#}}` etc. — they are never hardcoded in node bodies or visible in the YAML export.
 
 ---
 
 ## Step 5 — Adapt for your collection
 
-If your Qdrant collection name or dataset names differ from the original, update the Qdrant search node bodies in the Dify editor:
+If your Qdrant collection name or dataset names differ from the original, update the search node bodies in the Dify editor:
 
-**Unified Search node** — update the URL to your `QDRANT_POINTS_URL` (already done via env var).
+**Unified Search node** — the URL is already parameterised via `{{#env.QDRANT_POINTS_URL#}}`. No change needed here.
 
 **Tech Search node** — change the filter value to match your dataset name:
+
 ```json
 "filter": {"must": [{"key": "dataset", "match": {"value": "YOUR_DATASET_NAME"}}]}
 ```
 
-**Intent Router code node** — update the `dual_signals` regex patterns to match your own processor/component naming conventions if you're not using NiFi.
+**Intent Router code node** — update the `dual_signals` regex patterns to match your own component naming conventions if you're not using NiFi:
+
+```python
+dual_signals = [
+    r'\b[A-Z][a-zA-Z]+(?:YourComponentSuffix)\b',  # adapt to your naming scheme
+    r'\bconfigure\b',
+    r'\bproperties\b',
+    # add domain-specific terms here
+]
+```
 
 ---
 
@@ -326,40 +345,41 @@ If your Qdrant collection name or dataset names differ from the original, update
 2. Click **Run** to open the chatbot
 3. Ask a question about your documents
 
-If you see an error on first run, check the **Logs** panel in Dify — it shows the output of every node. Common issues are listed below.
+If you see an error on first run, open the **Logs** panel in Dify — it shows the output of every node in the pipeline, making it straightforward to trace exactly where a failure occurred.
 
 ---
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
-|---------|-------------|-----|
+| --- | --- | --- |
 | Qdrant returns HTTP 400 "Not existing vector name error" | Collection does not have a named `dense` vector | Re-create collection with `"vectors": {"dense": {...}}` schema |
-| Empty results from search | `QDRANT_POINTS_URL` wrong | Ensure URL ends in `/points/query`, not `/search` |
+| Empty results from search | `QDRANT_POINTS_URL` incorrect | Ensure URL ends in `/points/query`, not `/search` |
 | `AttributeError: 'str' object has no attribute 'get'` in Format node | Jina Reranker returns document as string, not dict | Already handled in the workflow — check you imported the latest DSL |
-| All answers say "insufficient information" | Documents not ingested correctly | Check payload has a `text` field; verify `dataset` filter value matches your ingestion |
+| All answers say "insufficient information" | Documents not ingested correctly, or `dataset` filter mismatch | Check payload has a `text` field; verify `dataset` value matches the filter string in the Dify search nodes exactly |
 | Vector extraction fails | Dify array cap hit | Already handled via `json.dumps()` — do not change output type to `array[number]` |
-| Wrong search path fired | Intent router regex too broad/narrow | Edit the `dual_signals` patterns in the Intent Router code node |
+| Wrong search path fired | Intent router regex too broad or too narrow | Edit the `dual_signals` patterns in the Intent Router code node |
+| `points_count` lower than expected after ingestion | Upload batching errors or payload validation failures | Add error handling to your upload loop; print response status per batch |
 
 ---
 
 ## Adapting to your own use case
 
-This pipeline is **domain-agnostic**. The only things that are HxGN/NiFi-specific are:
+This pipeline is domain-agnostic. The only things that are HxGN/NiFi-specific are:
 
 1. The documents you ingest into Qdrant
 2. The `dual_signals` regex patterns in the Intent Router (tune for your naming conventions)
 3. The dataset names (`technical_docs`, `processors_services`) in the filter bodies
 
-Everything else — the embedding model, reranker, LLMs, routing logic, synthesis prompt — works identically for any document corpus.
+Everything else — the embedding model, reranker, LLMs, routing logic, synthesis prompt — works identically for any document corpus. To port to a new domain, change only those three things.
 
 ---
 
 ## Security notes
 
-- API keys are stored as **Dify environment variables** (masked as `*****`) — never visible in the YAML export
-- The DSL file in this repo has placeholder comments where keys were — it is safe to share publicly
-- Rotate keys via each provider's dashboard; update only the Dify environment variable
+- API keys are stored as **Dify environment variables** (displayed as `*****`) — never visible in the YAML export or accessible to end users of the chatbot
+- The DSL file in this repo has placeholder comments where keys were removed — it is safe to share publicly
+- Rotate keys via each provider's dashboard; update only the corresponding Dify environment variable — no code changes needed
 
 ---
 
